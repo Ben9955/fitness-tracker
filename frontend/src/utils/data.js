@@ -19,7 +19,7 @@ export const counts = [
   {
     name: "Workouts",
     icon: <FitnessCenterRounded sx={{ color: "inherit", fontSize: "26px" }} />,
-    desc: "Total no of workouts for today",
+    desc: "Today total workouts",
     key: "totalWorkouts",
     unit: "",
     color: "#41C1A6",
