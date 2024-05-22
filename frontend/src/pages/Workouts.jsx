@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import WorkoutCard from "../Cards/WorkoutCard";
+import WorkoutCard from "../components/cards/WorkoutCard";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateCalendar } from "@mui/x-date-pickers";
+import { getWorkouts } from "../api";
 import { CircularProgress } from "@mui/material";
+import { useDispatch } from "react-redux";
 
 const Container = styled.div`
   flex: 1;
@@ -33,7 +35,7 @@ const Left = styled.div`
   border-radius: 14px;
   box-shadow: 1px 6px 20px 0px ${({ theme }) => theme.primary + 15};
 `;
-const Title = styled.h3`
+const Title = styled.div`
   font-weight: 600;
   font-size: 16px;
   color: ${({ theme }) => theme.primary};
@@ -54,7 +56,7 @@ const CardWrapper = styled.div`
     gap: 12px;
   }
 `;
-const Section = styled.section`
+const Section = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0px 16px;
@@ -64,15 +66,31 @@ const Section = styled.section`
     gap: 12px;
   }
 `;
-const SecTitle = styled.h2`
+const SecTitle = styled.div`
   font-size: 22px;
   color: ${({ theme }) => theme.text_primary};
   font-weight: 500;
 `;
 
-function Workouts() {
+const Workouts = () => {
+  const dispatch = useDispatch();
+  const [todaysWorkouts, setTodaysWorkouts] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [date, setDate] = useState("");
 
+  const getTodaysWorkout = async () => {
+    setLoading(true);
+    const token = localStorage.getItem("fittrack-app-token");
+    await getWorkouts(token, date ? `?date=${date}` : "").then((res) => {
+      setTodaysWorkouts(res?.data?.todaysWorkouts);
+      console.log(res.data);
+      setLoading(false);
+    });
+  };
+
+  useEffect(() => {
+    getTodaysWorkout();
+  }, [date]);
   return (
     <Container>
       <Wrapper>
@@ -85,18 +103,22 @@ function Workouts() {
           </LocalizationProvider>
         </Left>
         <Right>
-          <CardWrapper>
-            <WorkoutCard workout={{}} />
-            <WorkoutCard workout={{}} />
-            <WorkoutCard workout={{}} />
-            <WorkoutCard workout={{}} />
-            <WorkoutCard workout={{}} />
-            <WorkoutCard workout={{}} />
-          </CardWrapper>
+          <Section>
+            <SecTitle>Todays Workout</SecTitle>
+            {loading ? (
+              <CircularProgress />
+            ) : (
+              <CardWrapper>
+                {todaysWorkouts.map((workout) => (
+                  <WorkoutCard workout={workout} />
+                ))}
+              </CardWrapper>
+            )}
+          </Section>
         </Right>
       </Wrapper>
     </Container>
   );
-}
+};
 
 export default Workouts;

@@ -8,5 +8,7 @@ router.post("/signup", UserRegister);
 router.post("/signin", UserRegister);
 
 router.post("/dashboard", verifyToken, getUserDashboard);
+router.get("/workout", verifyToken, getWorkoutsByDate);
+router.post("/workout", verifyToken, addWorkout);
 
 export default router;

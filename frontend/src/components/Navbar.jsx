@@ -4,6 +4,8 @@ import { MenuRounded } from "@mui/icons-material";
 import Logoimg from "../utils/images/Logo1.png";
 import { Avatar } from "@mui/material";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "../redux/reducers/userSlice";
 
 const Nav = styled.nav`
   background-color: ${({ theme }) => theme.bg};
@@ -133,6 +135,8 @@ const MobileMenu = styled.ul`
 
 function Navbar() {
   const [isOpen, setisOpen] = useState(false);
+  const { currentUser } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
 
   return (
     <Nav>
@@ -162,8 +166,8 @@ function Navbar() {
         </NavItems>
 
         <UserContainer>
-          <Avatar></Avatar>
-          <TextButton>Logout</TextButton>
+          <Avatar src={currentUser?.img}>{currentUser?.name[0]}</Avatar>
+          <TextButton onClick={() => dispatch(logout())}>Logout</TextButton>
         </UserContainer>
       </NavContainer>
     </Nav>
